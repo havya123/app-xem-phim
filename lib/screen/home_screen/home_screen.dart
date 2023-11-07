@@ -1,13 +1,10 @@
 import 'package:baitap08/config/size_config.dart';
 import 'package:baitap08/config/widget/search.dart';
-import 'package:baitap08/model/movie.dart';
-import 'package:baitap08/provider/movie_provider.dart';
 import 'package:baitap08/screen/home_screen/widget/trending.dart';
 import 'package:baitap08/screen/tab_screen/tab_screen.dart';
 import 'package:baitap08/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({this.controller, super.key});

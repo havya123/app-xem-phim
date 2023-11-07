@@ -2,7 +2,7 @@ import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class UserModel {
-  int id;
+  String id;
   String username;
   String password;
   UserModel({
@@ -21,7 +21,7 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'] as int,
+      id: map['id'] as String,
       username: map['username'] as String,
       password: map['password'] as String,
     );

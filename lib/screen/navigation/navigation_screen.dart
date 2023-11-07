@@ -1,5 +1,6 @@
 import 'package:baitap08/screen/favourite/favourite_screen.dart';
 import 'package:baitap08/screen/home_screen/home_screen.dart';
+import 'package:baitap08/screen/profile/profile_screen.dart';
 import 'package:baitap08/screen/search/search_screen.dart';
 
 import 'package:flutter/material.dart';
@@ -20,7 +21,8 @@ class _HomeState extends State<NavigationScreen> {
       controller: controller,
     ),
 
-    const FavouriteScreen()
+    const FavouriteScreen(),
+    const DetailProfileScreen()
     // const WatchListScreen(),
   ];
 
@@ -35,6 +37,11 @@ class _HomeState extends State<NavigationScreen> {
         activeColorPrimary: Colors.blue),
     PersistentBottomNavBarItem(
         icon: const Icon(FontAwesomeIcons.list),
+        inactiveColorPrimary: const Color(0xff67686D),
+        activeColorPrimary: Colors.blue),
+
+    PersistentBottomNavBarItem(
+        icon: const Icon(FontAwesomeIcons.person),
         inactiveColorPrimary: const Color(0xff67686D),
         activeColorPrimary: Colors.blue),
     // PersistentBottomNavBarItem(

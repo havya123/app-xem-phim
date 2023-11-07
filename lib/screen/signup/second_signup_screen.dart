@@ -1,9 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:baitap08/config/size_config.dart';
 import 'package:baitap08/config/widget/button.dart';
 import 'package:baitap08/config/widget/textfiled.dart';
 import 'package:baitap08/provider/signUp_provider.dart';
-import 'package:baitap08/route/routes.dart';
-import 'package:baitap08/screen/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +30,9 @@ class _SecondSignupState extends State<SecondSignup> {
       showpass2 = !showpass2;
     }
 
+    TextEditingController nameController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
+    TextEditingController addressController = TextEditingController();
     TextEditingController passController = TextEditingController();
     TextEditingController confirmpassController = TextEditingController();
 
@@ -76,6 +79,24 @@ class _SecondSignupState extends State<SecondSignup> {
                   key: formKey,
                   child: Column(
                     children: <Widget>[
+                      TextFieldWidget(
+                        hint: 'Họ và tên',
+                        errorText: "Hãy nhập họ và tên",
+                        controller: nameController,
+                      ),
+                      spaceHeight(context, height: 0.015),
+                      TextFieldWidget(
+                        hint: 'Địa chỉ',
+                        controller: addressController,
+                      ),
+                      spaceHeight(context, height: 0.015),
+                      TextFieldWidget(
+                        hint: 'Email',
+                        type: TextInputType.emailAddress,
+                        errorText: "Hãy nhập Email",
+                        controller: emailController,
+                      ),
+                      spaceHeight(context, height: 0.015),
                       StatefulBuilder(
                         builder: (context, setState) {
                           return TextFieldWidget(
@@ -133,11 +154,14 @@ class _SecondSignupState extends State<SecondSignup> {
                 function: () async {
                   if (checkConfirm()) {
                     if (formKey.currentState!.validate()) {
-                      await context
-                          .read<SignUpProvider>()
-                          .signUp(passController.text);
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, RouteName.loginRoute, (route) => false);
+                      context.read<SignUpProvider>().signUp(
+                          passController.text,
+                          nameController.text,
+                          emailController.text,
+                          addressController.text);
+                      Navigator.pop(context, {
+                        'password': passController.text,
+                      });
                     }
                   } else {
                     formKey.currentState!.validate();

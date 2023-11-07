@@ -38,6 +38,7 @@ class TextFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      style: const TextStyle(color: Colors.black),
       textInputAction: TextInputAction.go,
       onChanged: onChanged,
       controller: controller,
@@ -47,7 +48,7 @@ class TextFieldWidget extends StatelessWidget {
         hintText: hintText,
         label: Text(
           hint,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.black),
         ),
         labelStyle: const TextStyle(color: Colors.black),
         focusedErrorBorder: OutlineInputBorder(

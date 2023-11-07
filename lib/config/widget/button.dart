@@ -21,11 +21,12 @@ class ButtonWidget extends StatelessWidget {
             setState(() {
               loading = !loading;
             });
-            await Future.delayed(const Duration(seconds: 2));
+            await Future.delayed(const Duration(seconds: 1), () {
+              function();
+            });
             setState(() {
               loading = !loading;
             });
-            function();
           },
           child: Ink(
             child: Container(

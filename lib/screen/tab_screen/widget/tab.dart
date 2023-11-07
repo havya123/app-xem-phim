@@ -2,9 +2,9 @@ import 'package:baitap08/config/widget/item.dart';
 import 'package:baitap08/model/movie.dart';
 import 'package:baitap08/provider/movie_provider.dart';
 import 'package:baitap08/route/routes.dart';
-import 'package:baitap08/screen/list/list.dart';
+
 import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+
 import 'package:provider/provider.dart';
 
 class TabWidget extends StatelessWidget {

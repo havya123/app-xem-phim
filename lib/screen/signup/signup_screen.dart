@@ -1,16 +1,18 @@
 import 'package:baitap08/config/size_config.dart';
+import 'package:baitap08/config/widget/alertDialog.dart';
 import 'package:baitap08/config/widget/button.dart';
 import 'package:baitap08/config/widget/textfiled.dart';
+import 'package:baitap08/provider/signUp_provider.dart';
 import 'package:baitap08/route/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    FirebaseAuth auth = FirebaseAuth.instance;
     TextEditingController phoneController = TextEditingController();
     TextEditingController verifyController = TextEditingController();
     final formKey = GlobalKey<FormState>();
@@ -36,9 +38,6 @@ class SignupScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       TextFieldWidget(
-                        onChanged: (p0) {
-                          phoneController.text = p0;
-                        },
                         controller: phoneController,
                         hint: 'Nhập số điện thoại',
                         type: TextInputType.phone,
@@ -68,24 +67,31 @@ class SignupScreen extends StatelessWidget {
                               child: GestureDetector(
                             onTap: () async {
                               if (formKey.currentState!.validate()) {
-                                print("84${phoneController.text}");
-                                await FirebaseAuth.instance.verifyPhoneNumber(
-                                  phoneNumber: "+84${phoneController.text}",
-                                  verificationCompleted:
-                                      (PhoneAuthCredential credential) {
-                                    print("complete");
-                                  },
-                                  verificationFailed:
-                                      (FirebaseAuthException e) {
-                                    print("failed");
-                                  },
-                                  codeSent: (String verificationId,
-                                      int? resendToken) {
-                                    verifyId = verificationId;
-                                  },
-                                  codeAutoRetrievalTimeout:
-                                      (String verificationId) {},
-                                );
+                                bool isRegistered = await context
+                                    .read<SignUpProvider>()
+                                    .isRegistered(phoneController.text);
+                                if (isRegistered) {
+                                  ErrorDialog.showErrorDialog(context,
+                                      'So dien thoai da duoc dang ky ');
+                                } else {
+                                  await FirebaseAuth.instance.verifyPhoneNumber(
+                                    phoneNumber: "+84${phoneController.text}",
+                                    verificationCompleted:
+                                        (PhoneAuthCredential credential) {
+                                      print("complete");
+                                    },
+                                    verificationFailed:
+                                        (FirebaseAuthException e) {
+                                      print("failed");
+                                    },
+                                    codeSent: (String verificationId,
+                                        int? resendToken) {
+                                      verifyId = verificationId;
+                                    },
+                                    codeAutoRetrievalTimeout:
+                                        (String verificationId) {},
+                                  );
+                                }
                               }
                             },
                             child: Container(
@@ -111,18 +117,8 @@ class SignupScreen extends StatelessWidget {
                   )),
               spaceHeight(context),
               ButtonWidget(
-                function: () async {
-                  try {
-                    PhoneAuthCredential credential =
-                        PhoneAuthProvider.credential(
-                            verificationId: verifyId,
-                            smsCode: verifyController.text);
-                    await auth.signInWithCredential(credential);
-                    Navigator.pushReplacementNamed(
-                        context, RouteName.secondSignUpRoute);
-                  } catch (e) {
-                    print(e);
-                  }
+                function: () {
+                  signUp(context, verifyId, verifyController, phoneController);
                 },
                 textButton: "Xác nhận",
               ),
@@ -140,5 +136,24 @@ class SignupScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> signUp(
+      context,
+      String verifyId,
+      TextEditingController verifyController,
+      TextEditingController phoneController) async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: verifyId,
+        smsCode: verifyController.text,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      Navigator.pushReplacementNamed(context, RouteName.secondSignUpRoute,
+          arguments: {'phone': phoneController.text});
+    } catch (e) {
+      ErrorDialog.showErrorDialog(context, "SMS is not correct");
+    }
   }
 }

@@ -24,7 +24,6 @@ class _SplashScreenState extends State<SplashScreen> {
     await context.read<MovieProvider>().getMoviesPopular();
     await context.read<MovieProvider>().getMoviesTopRated();
     await context.read<MovieProvider>().getMoviesUpComing();
-
     Navigator.pushNamedAndRemoveUntil(
       context,
       RouteName.loginRoute,

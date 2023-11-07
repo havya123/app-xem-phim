@@ -1,9 +1,10 @@
 import 'package:baitap08/config/size_config.dart';
+import 'package:baitap08/config/widget/alertDialog.dart';
 import 'package:baitap08/config/widget/button.dart';
 import 'package:baitap08/config/widget/textfiled.dart';
 import 'package:baitap08/provider/favourite_provider.dart';
 import 'package:baitap08/provider/login_provider.dart';
-import 'package:baitap08/repository/user_login_repo.dart';
+import 'package:baitap08/provider/user_detail_provider.dart';
 import 'package:baitap08/route/routes.dart';
 import 'package:baitap08/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -39,16 +40,12 @@ class LoginScreen extends StatelessWidget {
               ),
               spaceHeight(context),
               TextFieldWidget(
-                onChanged: (p0) {
-                  phoneController.text = "84$p0";
-                },
+                controller: phoneController,
                 hint: 'Username',
               ),
               spaceHeight(context),
               TextFieldWidget(
-                onChanged: (p0) {
-                  passwordController.text = p0;
-                },
+                controller: passwordController,
                 hint: 'Password',
               ),
               spaceHeight(context, height: 0.06),
@@ -56,19 +53,31 @@ class LoginScreen extends StatelessWidget {
                 function: () {
                   context
                       .read<LoginProvider>()
-                      .login(phoneController.text, passwordController.text, () {
-                    print("Success");
-                  }, () {
-                    print("Error");
+                      .login(
+                        phoneController.text,
+                        passwordController.text,
+                      )
+                      .then((value) {
+                    if (value != null) {
+                      Navigator.pushReplacementNamed(
+                          context, RouteName.navigationRoute);
+                      context.read<UserDetailProvider>().getUserDetail();
+                    } else {
+                      ErrorDialog.showErrorDialog(
+                          context, 'Tai khoan hoac mat khau khong dung');
+                    }
                   });
-                  // context.read<FavouriteProvider>().loadListId();
+                  context.read<FavouriteProvider>().loadListId();
                 },
                 textButton: "Login",
               ),
               spaceHeight(context),
               TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, RouteName.signUpRoute);
+                    Navigator.pushNamed(context, RouteName.signUpRoute)
+                        .then((value) {
+                      print(value);
+                    });
                   },
                   child: const Text("Not have account yet? SignUp")),
             ],
