@@ -30,6 +30,7 @@ class DialogWidget extends StatelessWidget {
           TextFieldWidget(
             hint: "",
             controller: controller,
+            textColor: Colors.black,
           ),
           spaceHeight(context),
           ButtonWidget(

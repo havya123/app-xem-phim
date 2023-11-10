@@ -19,6 +19,7 @@ class TextFieldWidget extends StatelessWidget {
       this.isConfirmPass = false,
       this.removeBorder = false,
       this.hintText = "",
+      this.textColor = Colors.white,
       super.key});
 
   void Function(String)? onChanged;
@@ -35,10 +36,14 @@ class TextFieldWidget extends StatelessWidget {
   bool isConfirmPass;
   bool removeBorder;
   String hintText;
+  Color? textColor;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: const TextStyle(color: Colors.black),
+      validator: (value) {
+        return null;
+      },
+      style: TextStyle(color: textColor),
       textInputAction: TextInputAction.go,
       onChanged: onChanged,
       controller: controller,

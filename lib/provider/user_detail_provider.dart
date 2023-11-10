@@ -1,43 +1,36 @@
-import 'dart:io';
+import 'dart:async';
 
-import 'package:baitap08/model/user_detail.dart';
 import 'package:baitap08/repository/user_detail_repo.dart';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserDetailProvider extends ChangeNotifier {
-  UserDetail? userDetail;
-
   XFile? selectedImage;
+  StreamController loadingStatus = StreamController();
+  String phone = "";
 
-  Future<void> getUserDetail() async {
-    try {
-      var response = await UserDetailRepo().getUserDetail();
-      userDetail = response;
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
+  Future<void> getPhone() async {
+    final prefs = await SharedPreferences.getInstance();
+    phone = prefs.getString('phone') ?? "";
+    notifyListeners();
   }
 
   Future<void> updateName(String name) async {
-    await UserDetailRepo().updateName(name);
-    await getUserDetail();
+    await UserDetailRepo().updateName(name, phone);
   }
 
   Future<void> updatePhone(String phone) async {
-    await UserDetailRepo().updatePhone(phone);
-    await getUserDetail();
+    await UserDetailRepo().updatePhone(phone, phone);
   }
 
   Future<void> updateAddress(String address) async {
-    await UserDetailRepo().updateAddress(address);
-    await getUserDetail();
+    await UserDetailRepo().updateAddress(address, phone);
   }
 
   Future<void> updateEmail(String email) async {
-    await UserDetailRepo().updateEmail(email);
-    await getUserDetail();
+    await UserDetailRepo().updateEmail(email, phone);
   }
 
   Future<void> pickImageFromGallery() async {
@@ -45,7 +38,6 @@ class UserDetailProvider extends ChangeNotifier {
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (returnImage == null) return;
     selectedImage = returnImage;
-    notifyListeners();
   }
 
   Future<void> pickImageFromCamera() async {
@@ -53,11 +45,15 @@ class UserDetailProvider extends ChangeNotifier {
         await ImagePicker().pickImage(source: ImageSource.camera);
     if (returnImage == null) return;
     selectedImage = returnImage;
-    notifyListeners();
   }
 
   Future<void> saveImage() async {
-    await UserDetailRepo().uploadAvatar(selectedImage);
-    await getUserDetail();
+    await UserDetailRepo().uploadAvatar(selectedImage, loadingStatus, phone);
+  }
+
+  @override
+  void dispose() {
+    loadingStatus.close();
+    super.dispose();
   }
 }

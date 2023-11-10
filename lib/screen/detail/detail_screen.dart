@@ -7,6 +7,7 @@ import 'package:baitap08/screen/detail/detail_tab.dart';
 import 'package:baitap08/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -94,23 +95,16 @@ class _DetailScreenState extends State<DetailScreen> {
                             builder: (context, value, child) {
                               return Positioned(
                                   right: 0,
-                                  child: IconButton(
-                                    icon: !value.isSaved(widget.id)
-                                        ? const Icon(
-                                            FontAwesomeIcons.heart,
-                                            color: Colors.orange,
-                                          )
-                                        : const Icon(
-                                            FontAwesomeIcons.heartCircleCheck,
-                                            color: Colors.orange,
-                                          ),
-                                    onPressed: () {
+                                  child: LikeButton(
+                                    isLiked: value.isSaved(widget.id),
+                                    onTap: (isLiked) async {
                                       context
                                           .read<FavouriteProvider>()
                                           .addFavouriteItem(widget.id);
                                       context
                                           .read<FavouriteProvider>()
                                           .loadWatchList();
+                                      return !isLiked;
                                     },
                                   ));
                             },

@@ -14,13 +14,16 @@ class ImageSelected extends StatelessWidget {
           TextButton(
             onPressed: () async {
               await context.read<UserDetailProvider>().pickImageFromGallery();
-              context.read<UserDetailProvider>().saveImage();
+              await context.read<UserDetailProvider>().saveImage();
+              Navigator.pop(context);
             },
             child: const Text('Lấy ảnh từ thư viện'),
           ),
           TextButton(
             onPressed: () {
               context.read<UserDetailProvider>().pickImageFromCamera();
+              context.read<UserDetailProvider>().saveImage();
+              Navigator.pop(context);
             },
             child: const Text('Lấy ảnh từ camera'),
           ),

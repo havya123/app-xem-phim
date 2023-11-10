@@ -36,7 +36,6 @@ class FavouriteProvider extends ChangeNotifier {
     List<String>? listData = prefs.getStringList("listId");
     if (listData != null) {
       favourieId = listData.map((e) => int.parse(e)).toList();
-      print(favourieId);
     } else {
       favourieId = [];
     }

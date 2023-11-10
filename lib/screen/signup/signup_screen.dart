@@ -77,19 +77,23 @@ class SignupScreen extends StatelessWidget {
                                   await FirebaseAuth.instance.verifyPhoneNumber(
                                     phoneNumber: "+84${phoneController.text}",
                                     verificationCompleted:
-                                        (PhoneAuthCredential credential) {
-                                      print("complete");
-                                    },
+                                        (PhoneAuthCredential credential) {},
                                     verificationFailed:
                                         (FirebaseAuthException e) {
-                                      print("failed");
+                                      ErrorDialog.showErrorDialog(context,
+                                          'Da co loi xay ra vui long thu lai ');
                                     },
                                     codeSent: (String verificationId,
                                         int? resendToken) {
                                       verifyId = verificationId;
+                                      ErrorDialog.showErrorDialog(
+                                          context, 'SMS da duoc gui');
                                     },
                                     codeAutoRetrievalTimeout:
-                                        (String verificationId) {},
+                                        (String verificationId) {
+                                      ErrorDialog.showErrorDialog(context,
+                                          "Da co loi xay ra vui long thu lai");
+                                    },
                                   );
                                 }
                               }
@@ -150,8 +154,9 @@ class SignupScreen extends StatelessWidget {
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
-      Navigator.pushReplacementNamed(context, RouteName.secondSignUpRoute,
-          arguments: {'phone': phoneController.text});
+      Navigator.pushNamed(context, RouteName.secondSignUpRoute,
+              arguments: phoneController.text)
+          .then((value) => Navigator.pop(context, value));
     } catch (e) {
       ErrorDialog.showErrorDialog(context, "SMS is not correct");
     }

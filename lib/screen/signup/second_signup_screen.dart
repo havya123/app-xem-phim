@@ -4,13 +4,14 @@ import 'package:baitap08/config/size_config.dart';
 import 'package:baitap08/config/widget/button.dart';
 import 'package:baitap08/config/widget/textfiled.dart';
 import 'package:baitap08/provider/signUp_provider.dart';
+import 'package:baitap08/route/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class SecondSignup extends StatefulWidget {
-  const SecondSignup({super.key});
-
+  SecondSignup({this.phone, super.key});
+  String? phone;
   @override
   State<SecondSignup> createState() => _SecondSignupState();
 }
@@ -21,14 +22,6 @@ class _SecondSignupState extends State<SecondSignup> {
     final formKey = GlobalKey<FormState>();
     bool showpass = true;
     bool showpass2 = true;
-
-    void isHidden() {
-      showpass = !showpass;
-    }
-
-    void isHidden2() {
-      showpass2 = !showpass2;
-    }
 
     TextEditingController nameController = TextEditingController();
     TextEditingController emailController = TextEditingController();
@@ -104,7 +97,9 @@ class _SecondSignupState extends State<SecondSignup> {
                             isPass: showpass,
                             icon: IconButton(
                               onPressed: () {
-                                isHidden();
+                                setState(() {
+                                  showpass = !showpass;
+                                });
                               },
                               icon: Icon(
                                 showpass
@@ -128,7 +123,9 @@ class _SecondSignupState extends State<SecondSignup> {
                           isPass: showpass2,
                           icon: IconButton(
                             onPressed: () {
-                              isHidden2();
+                              setState(() {
+                                showpass2 = !showpass2;
+                              });
                             },
                             icon: Icon(
                               showpass2
@@ -155,11 +152,14 @@ class _SecondSignupState extends State<SecondSignup> {
                   if (checkConfirm()) {
                     if (formKey.currentState!.validate()) {
                       context.read<SignUpProvider>().signUp(
-                          passController.text,
-                          nameController.text,
-                          emailController.text,
-                          addressController.text);
+                            widget.phone as String,
+                            passController.text,
+                            nameController.text,
+                            emailController.text,
+                            addressController.text,
+                          );
                       Navigator.pop(context, {
+                        'phone': widget.phone,
                         'password': passController.text,
                       });
                     }

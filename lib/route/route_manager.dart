@@ -1,3 +1,4 @@
+import 'package:baitap08/model/movie.dart';
 import 'package:baitap08/route/routes.dart';
 import 'package:baitap08/screen/detail/detail_screen.dart';
 import 'package:baitap08/screen/error_screen/error_screen.dart';
@@ -5,6 +6,7 @@ import 'package:baitap08/screen/home_screen/home_screen.dart';
 import 'package:baitap08/screen/list/list.dart';
 import 'package:baitap08/screen/login/login_screen.dart';
 import 'package:baitap08/screen/navigation/navigation_screen.dart';
+import 'package:baitap08/screen/review_screen.dart/review_screen.dart';
 import 'package:baitap08/screen/signup/second_signup_screen.dart';
 import 'package:baitap08/screen/signup/signup_screen.dart';
 import 'package:baitap08/screen/splash_screen/splash_screen.dart';
@@ -31,7 +33,15 @@ class RouteManager {
       case RouteName.signUpRoute:
         return pageTransition(const SignupScreen());
       case RouteName.secondSignUpRoute:
-        return pageTransition(const SecondSignup());
+        final arg = settings.arguments as String;
+        return pageTransition(SecondSignup(
+          phone: arg,
+        ));
+      case RouteName.reviewRoute:
+        final arg = settings.arguments as Movie;
+        return pageTransition(ReviewScreen(
+          movie: arg,
+        ));
       default:
         return pageTransition(const ErrorScreen());
     }

@@ -13,7 +13,7 @@ class DetailTabs extends StatelessWidget {
     List<Widget> tabs = [
       OverViewTab(overView: movie.overView),
       ReviewTab(
-        id: movie.id,
+        movie: movie,
       ),
       CasterTab(id: movie.id),
     ];

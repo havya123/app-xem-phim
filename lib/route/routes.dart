@@ -9,4 +9,5 @@ class RouteName {
   static const String listRoute = "/listRoute";
   static const String signUpRoute = "/signUpRoute";
   static const String secondSignUpRoute = "/sencondSignUpRoute";
+  static const String reviewRoute = "/reviewRoute";
 }

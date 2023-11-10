@@ -8,6 +8,7 @@ import 'package:baitap08/provider/user_detail_provider.dart';
 import 'package:baitap08/route/routes.dart';
 import 'package:baitap08/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -18,6 +19,7 @@ class LoginScreen extends StatelessWidget {
     TextTheme textTheme = ThemeApp.themeApp.textTheme;
     TextEditingController phoneController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
+    bool hidePass = true;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -42,12 +44,25 @@ class LoginScreen extends StatelessWidget {
               TextFieldWidget(
                 controller: phoneController,
                 hint: 'Username',
+                type: TextInputType.phone,
               ),
               spaceHeight(context),
-              TextFieldWidget(
-                controller: passwordController,
-                hint: 'Password',
-              ),
+              StatefulBuilder(builder: (context, setState) {
+                return TextFieldWidget(
+                  controller: passwordController,
+                  hint: 'Password',
+                  isPass: hidePass,
+                  icon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          hidePass = !hidePass;
+                        });
+                      },
+                      icon: hidePass
+                          ? const Icon(FontAwesomeIcons.eyeSlash)
+                          : const Icon(FontAwesomeIcons.eye)),
+                );
+              }),
               spaceHeight(context, height: 0.06),
               ButtonWidget(
                 function: () {
@@ -57,11 +72,16 @@ class LoginScreen extends StatelessWidget {
                         phoneController.text,
                         passwordController.text,
                       )
-                      .then((value) {
+                      .then((value) async {
                     if (value != null) {
+                      await context
+                          .read<LoginProvider>()
+                          .savePhoneAndToken(phoneController.text);
+                      await context.read<UserDetailProvider>().getPhone();
                       Navigator.pushReplacementNamed(
-                          context, RouteName.navigationRoute);
-                      context.read<UserDetailProvider>().getUserDetail();
+                        context,
+                        RouteName.navigationRoute,
+                      );
                     } else {
                       ErrorDialog.showErrorDialog(
                           context, 'Tai khoan hoac mat khau khong dung');
@@ -73,11 +93,13 @@ class LoginScreen extends StatelessWidget {
               ),
               spaceHeight(context),
               TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, RouteName.signUpRoute)
-                        .then((value) {
-                      print(value);
-                    });
+                  onPressed: () async {
+                    final result = await Navigator.pushNamed(
+                        context, RouteName.signUpRoute);
+                    if (result is Map) {
+                      phoneController.text = result['phone'];
+                      passwordController.text = result['password'];
+                    }
                   },
                   child: const Text("Not have account yet? SignUp")),
             ],

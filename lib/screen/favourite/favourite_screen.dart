@@ -4,7 +4,6 @@ import 'package:baitap08/model/movie.dart';
 import 'package:baitap08/provider/favourite_provider.dart';
 import 'package:baitap08/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class FavouriteScreen extends StatelessWidget {
@@ -13,7 +12,6 @@ class FavouriteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = ThemeApp.themeApp.textTheme;
-    context.read<FavouriteProvider>().loadWatchList();
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

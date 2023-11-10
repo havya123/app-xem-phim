@@ -1,6 +1,8 @@
 import 'package:baitap08/config/size_config.dart';
 import 'package:baitap08/provider/favourite_provider.dart';
+import 'package:baitap08/provider/login_provider.dart';
 import 'package:baitap08/provider/movie_provider.dart';
+import 'package:baitap08/provider/user_detail_provider.dart';
 import 'package:baitap08/route/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,11 +26,13 @@ class _SplashScreenState extends State<SplashScreen> {
     await context.read<MovieProvider>().getMoviesPopular();
     await context.read<MovieProvider>().getMoviesTopRated();
     await context.read<MovieProvider>().getMoviesUpComing();
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      RouteName.loginRoute,
-      (route) => false,
-    );
+    await context.read<UserDetailProvider>().getPhone();
+    bool isExpired = await context.read<LoginProvider>().tokenExpired();
+    if (isExpired) {
+      Navigator.pushReplacementNamed(context, RouteName.loginRoute);
+    } else {
+      Navigator.pushReplacementNamed(context, RouteName.navigationRoute);
+    }
   }
 
   @override
