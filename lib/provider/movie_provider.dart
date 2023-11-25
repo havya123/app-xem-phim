@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:baitap08/enum/status_code.dart';
 import 'package:baitap08/model/movie.dart';
 import 'package:baitap08/repository/movie_repo.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,9 @@ class MovieProvider extends ChangeNotifier {
   List<Movie> upComingMovies = [];
   List<Movie> popularMovies = [];
   List<Movie> nowPlayongMovies = [];
+
+  StreamController<Map> recomendationMovies = StreamController<Map>.broadcast();
+  Timer? timer;
 
   Future<void> getMoviesTopRated({int page = 1}) async {
     topRatedMovies = await MovieRepo().getMoviesPopular("top_rated", page);
@@ -30,11 +35,39 @@ class MovieProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Movie?> getMovieDetail(int? id) async {
-    if (id != null) {
-      var response = await MovieRepo().getMovieDetail(id);
-      return response;
-    }
-    return null;
+  Future<Movie?> getMovieDetail(int id) async {
+    var response = await MovieRepo().getMovieDetail(id);
+    return response;
+  }
+
+  void getRecomendation(int id, int page) async {
+    List<Movie> listMoviesRecomendation = [];
+    timer?.cancel();
+
+    timer = Timer(const Duration(seconds: 1), () async {
+      if (page == 1) {
+        recomendationMovies.add({'status': statusCode.loading, 'data': []});
+        var response = await MovieRepo().getRecomendation(id, page);
+        if (response.isNotEmpty) {
+          listMoviesRecomendation = response;
+          recomendationMovies.add(
+              {'status': statusCode.success, 'data': listMoviesRecomendation});
+        } else {
+          recomendationMovies.add(
+              {'status': statusCode.success, 'data': listMoviesRecomendation});
+        }
+      } else {
+        var response = await MovieRepo().getRecomendation(id, page);
+        listMoviesRecomendation.addAll(response);
+        recomendationMovies.add(
+            {'status': statusCode.success, 'data': listMoviesRecomendation});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    recomendationMovies.close();
+    super.dispose();
   }
 }

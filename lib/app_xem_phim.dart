@@ -9,6 +9,7 @@ import 'package:baitap08/provider/search_provider.dart';
 import 'package:baitap08/provider/signUp_provider.dart';
 import 'package:baitap08/provider/user_detail_provider.dart';
 import 'package:baitap08/provider/user_review_provider.dart';
+import 'package:baitap08/provider/video_provider.dart';
 import 'package:baitap08/route/route_manager.dart';
 import 'package:baitap08/route/routes.dart';
 import 'package:baitap08/theme/theme.dart';
@@ -54,6 +55,9 @@ class MovieApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => FilmReviewProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => VideoProvider(),
         ),
       ],
       builder: (context, child) {

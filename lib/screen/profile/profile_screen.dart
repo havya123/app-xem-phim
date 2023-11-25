@@ -9,11 +9,14 @@ import 'package:baitap08/route/routes.dart';
 import 'package:baitap08/screen/profile/widget/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class DetailProfileScreen extends StatefulWidget {
-  const DetailProfileScreen({super.key});
+  DetailProfileScreen({this.controller, super.key});
+
+  PersistentTabController? controller;
 
   @override
   State<DetailProfileScreen> createState() => _DetailProfileScreenState();
@@ -50,7 +53,7 @@ class _DetailProfileScreenState extends State<DetailProfileScreen> {
                         child: FadeInImage.memoryNetwork(
                           fit: BoxFit.cover,
                           placeholder: kTransparentImage,
-                          image: userDetail?.avatar ?? "",
+                          image: userDetail!.avatar,
                           imageErrorBuilder: (context, error, stackTrace) =>
                               const Image(
                             fit: BoxFit.cover,
@@ -96,7 +99,7 @@ class _DetailProfileScreenState extends State<DetailProfileScreen> {
                 ),
                 spaceHeight(context),
                 ButtonListTile(
-                  title: userDetail?.name ?? "",
+                  title: userDetail.name,
                   icon: FontAwesomeIcons.userLarge,
                   iconbutton: FontAwesomeIcons.penToSquare,
                   onPressIcon: () {
@@ -106,9 +109,9 @@ class _DetailProfileScreenState extends State<DetailProfileScreen> {
                         return DialogWidget(
                           controller: nameController,
                           function: () async {
-                            await context
-                                .read<UserDetailProvider>()
-                                .updateName(nameController.text);
+                            await context.read<UserDetailProvider>().updateName(
+                                nameController.text,
+                                context.read<LoginProvider>().userPhone);
                             Navigator.pop(context);
                             nameController.clear();
                           },
@@ -119,7 +122,7 @@ class _DetailProfileScreenState extends State<DetailProfileScreen> {
                   },
                 ),
                 ButtonListTile(
-                  title: userDetail?.phone.toString() ?? "",
+                  title: userDetail.phone.toString(),
                   icon: FontAwesomeIcons.phone,
                   iconbutton: FontAwesomeIcons.plus,
                   onPressIcon: () {
@@ -131,7 +134,8 @@ class _DetailProfileScreenState extends State<DetailProfileScreen> {
                           function: () async {
                             await context
                                 .read<UserDetailProvider>()
-                                .updatePhone(phoneController.text);
+                                .updatePhone(phoneController.text,
+                                    context.read<LoginProvider>().userPhone);
                             Navigator.pop(context);
                             phoneController.clear();
                           },
@@ -142,7 +146,7 @@ class _DetailProfileScreenState extends State<DetailProfileScreen> {
                   },
                 ),
                 ButtonListTile(
-                  title: userDetail?.email ?? "",
+                  title: userDetail.email,
                   icon: FontAwesomeIcons.envelope,
                   iconbutton: FontAwesomeIcons.penToSquare,
                   onPressIcon: () {
@@ -154,7 +158,8 @@ class _DetailProfileScreenState extends State<DetailProfileScreen> {
                           function: () async {
                             await context
                                 .read<UserDetailProvider>()
-                                .updateEmail(mailController.text);
+                                .updateEmail(mailController.text,
+                                    context.read<LoginProvider>().userPhone);
                             Navigator.pop(context);
                             mailController.clear();
                           },
@@ -177,7 +182,8 @@ class _DetailProfileScreenState extends State<DetailProfileScreen> {
                           function: () async {
                             await context
                                 .read<UserDetailProvider>()
-                                .updateAddress(addressController.text);
+                                .updateAddress(addressController.text,
+                                    context.read<LoginProvider>().userPhone);
                             Navigator.pop(context);
                             addressController.clear();
                           },
@@ -188,7 +194,7 @@ class _DetailProfileScreenState extends State<DetailProfileScreen> {
                   },
                 ),
                 ButtonListTile(
-                  title: userDetail?.address ?? "",
+                  title: userDetail.address ?? "",
                   icon: FontAwesomeIcons.mapLocation,
                   iconbutton: FontAwesomeIcons.penToSquare,
                   onPressIcon: () {
@@ -200,7 +206,8 @@ class _DetailProfileScreenState extends State<DetailProfileScreen> {
                           function: () async {
                             await context
                                 .read<UserDetailProvider>()
-                                .updateAddress(addressController.text);
+                                .updateAddress(addressController.text,
+                                    context.read<LoginProvider>().userPhone);
                             Navigator.pop(context);
                             addressController.clear();
                           },
@@ -214,11 +221,10 @@ class _DetailProfileScreenState extends State<DetailProfileScreen> {
                 spaceHeight(context),
                 ButtonWidget(
                   function: () async {
-                    await context.read<LoginProvider>().logOut();
-
-                    Navigator.of(context, rootNavigator: true)
-                        .pushNamedAndRemoveUntil(
-                            RouteName.splashRoute, (route) => false);
+                    await context
+                        .read<LoginProvider>()
+                        .logOut()
+                        .then((value) => widget.controller!.jumpToTab(0));
                   },
                   textButton: "Đăng xuất",
                 ),

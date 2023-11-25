@@ -8,28 +8,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserDetailProvider extends ChangeNotifier {
   XFile? selectedImage;
-  StreamController loadingStatus = StreamController();
-  String phone = "";
+  StreamController loadingStatus = StreamController.broadcast();
 
-  Future<void> getPhone() async {
-    final prefs = await SharedPreferences.getInstance();
-    phone = prefs.getString('phone') ?? "";
-    notifyListeners();
-  }
-
-  Future<void> updateName(String name) async {
+  Future<void> updateName(String name, String phone) async {
     await UserDetailRepo().updateName(name, phone);
   }
 
-  Future<void> updatePhone(String phone) async {
-    await UserDetailRepo().updatePhone(phone, phone);
+  Future<void> updatePhone(String newPhone, String phone) async {
+    await UserDetailRepo().updatePhone(newPhone, phone);
   }
 
-  Future<void> updateAddress(String address) async {
+  Future<void> updateAddress(String address, String phone) async {
     await UserDetailRepo().updateAddress(address, phone);
   }
 
-  Future<void> updateEmail(String email) async {
+  Future<void> updateEmail(String email, String phone) async {
     await UserDetailRepo().updateEmail(email, phone);
   }
 
@@ -47,7 +40,7 @@ class UserDetailProvider extends ChangeNotifier {
     selectedImage = returnImage;
   }
 
-  Future<void> saveImage() async {
+  Future<void> saveImage(String phone) async {
     await UserDetailRepo().uploadAvatar(selectedImage, loadingStatus, phone);
   }
 

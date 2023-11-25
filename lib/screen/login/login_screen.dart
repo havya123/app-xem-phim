@@ -65,8 +65,8 @@ class LoginScreen extends StatelessWidget {
               }),
               spaceHeight(context, height: 0.06),
               ButtonWidget(
-                function: () {
-                  context
+                function: () async {
+                  await context
                       .read<LoginProvider>()
                       .login(
                         phoneController.text,
@@ -74,20 +74,28 @@ class LoginScreen extends StatelessWidget {
                       )
                       .then((value) async {
                     if (value != null) {
-                      await context
-                          .read<LoginProvider>()
-                          .savePhoneAndToken(phoneController.text);
-                      await context.read<UserDetailProvider>().getPhone();
-                      Navigator.pushReplacementNamed(
-                        context,
-                        RouteName.navigationRoute,
-                      );
+                      try {
+                        await context
+                            .read<FavouriteProvider>()
+                            .loadListId(phoneController.text)
+                            .then((value) async {
+                          await context
+                              .read<FavouriteProvider>()
+                              .loadWatchList()
+                              .then((value) {
+                            context
+                                .read<LoginProvider>()
+                                .updatePhone(phoneController.text);
+                          });
+                        });
+                      } catch (e) {
+                        print(e);
+                      }
                     } else {
                       ErrorDialog.showErrorDialog(
                           context, 'Tai khoan hoac mat khau khong dung');
                     }
                   });
-                  context.read<FavouriteProvider>().loadListId();
                 },
                 textButton: "Login",
               ),

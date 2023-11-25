@@ -1,6 +1,8 @@
 import 'package:baitap08/config/size_config.dart';
 import 'package:baitap08/model/movie.dart';
+import 'package:baitap08/model/user.dart';
 import 'package:baitap08/provider/favourite_provider.dart';
+import 'package:baitap08/provider/login_provider.dart';
 import 'package:baitap08/provider/movie_provider.dart';
 import 'package:baitap08/provider/review_provider.dart';
 import 'package:baitap08/screen/detail/detail_tab.dart';
@@ -41,6 +43,11 @@ class _DetailScreenState extends State<DetailScreen> {
                 Movie? data = snapshot.data;
                 return Column(
                   children: [
+                    Consumer<UserModel?>(
+                      builder: (context, value, child) {
+                        return Text(value!.name);
+                      },
+                    ),
                     spaceHeight(context),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,7 +107,11 @@ class _DetailScreenState extends State<DetailScreen> {
                                     onTap: (isLiked) async {
                                       context
                                           .read<FavouriteProvider>()
-                                          .addFavouriteItem(widget.id);
+                                          .addFavouriteItem(
+                                              context
+                                                  .read<LoginProvider>()
+                                                  .userPhone,
+                                              widget.id);
                                       context
                                           .read<FavouriteProvider>()
                                           .loadWatchList();

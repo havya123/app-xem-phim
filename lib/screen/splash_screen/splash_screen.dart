@@ -1,8 +1,6 @@
 import 'package:baitap08/config/size_config.dart';
-import 'package:baitap08/provider/favourite_provider.dart';
 import 'package:baitap08/provider/login_provider.dart';
 import 'package:baitap08/provider/movie_provider.dart';
-import 'package:baitap08/provider/user_detail_provider.dart';
 import 'package:baitap08/route/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,21 +16,20 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _fectData();
+    context.read<LoginProvider>().logOut();
+    _fectData().then((value) {
+      context.read<LoginProvider>().tokenExpired().then((value) {
+        Navigator.pushReplacementNamed(context, RouteName.navigationRoute);
+      });
+    });
   }
 
-  void _fectData() async {
+  Future<void> _fectData() async {
     await context.read<MovieProvider>().getMoviesNowPlaying();
     await context.read<MovieProvider>().getMoviesPopular();
     await context.read<MovieProvider>().getMoviesTopRated();
     await context.read<MovieProvider>().getMoviesUpComing();
-    await context.read<UserDetailProvider>().getPhone();
-    bool isExpired = await context.read<LoginProvider>().tokenExpired();
-    if (isExpired) {
-      Navigator.pushReplacementNamed(context, RouteName.loginRoute);
-    } else {
-      Navigator.pushReplacementNamed(context, RouteName.navigationRoute);
-    }
+    await context.read<LoginProvider>().getPhone();
   }
 
   @override

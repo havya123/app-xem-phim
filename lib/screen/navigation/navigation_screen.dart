@@ -1,7 +1,9 @@
 import 'package:baitap08/model/user.dart';
-import 'package:baitap08/provider/user_detail_provider.dart';
+import 'package:baitap08/provider/login_provider.dart';
 import 'package:baitap08/screen/favourite/favourite_screen.dart';
 import 'package:baitap08/screen/home_screen/home_screen.dart';
+import 'package:baitap08/screen/login/login_screen.dart';
+import 'package:baitap08/screen/notification/notification_screen.dart';
 import 'package:baitap08/screen/profile/profile_screen.dart';
 import 'package:baitap08/screen/search/search_screen.dart';
 import 'package:baitap08/service/firebase.dart';
@@ -24,7 +26,11 @@ class _HomeState extends State<NavigationScreen> {
     ),
 
     const FavouriteScreen(),
-    const DetailProfileScreen()
+    const NotificationScreen(),
+    DetailProfileScreen(
+      controller: controller,
+    ),
+
     // const WatchListScreen(),
   ];
 
@@ -41,39 +47,43 @@ class _HomeState extends State<NavigationScreen> {
         icon: const Icon(FontAwesomeIcons.list),
         inactiveColorPrimary: const Color(0xff67686D),
         activeColorPrimary: Colors.blue),
-
+    PersistentBottomNavBarItem(
+        icon: const Icon(Icons.notifications),
+        inactiveColorPrimary: const Color(0xff67686D),
+        activeColorPrimary: Colors.blue),
     PersistentBottomNavBarItem(
         icon: const Icon(FontAwesomeIcons.person),
         inactiveColorPrimary: const Color(0xff67686D),
         activeColorPrimary: Colors.blue),
-    // PersistentBottomNavBarItem(
-    //     icon: const Icon(Icons.favorite),
-    //     inactiveColorPrimary: const Color(0xff67686D),
-    //     activeColorPrimary: Colors.blue),
   ];
 
   static final PersistentTabController controller = PersistentTabController();
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<UserModel?>.value(
-      initialData: null,
-      value: FirebaseServices.userRef
-          .doc(context.read<UserDetailProvider>().phone)
-          .snapshots()
-          .map((event) {
-        return event.data();
-      }),
-      builder: (context, child) {
-        return PersistentTabView(
-          backgroundColor: const Color(0xff242A32),
-          context,
-          screens: widgets,
-          items: _barItem,
-          controller: controller,
-          resizeToAvoidBottomInset: true,
-        );
-      },
-    );
+    return Consumer<LoginProvider>(builder: (context, value, child) {
+      if (value.userPhone.isEmpty) {
+        return const LoginScreen();
+      }
+      return StreamProvider<UserModel?>.value(
+        initialData: null,
+        value: FirebaseServices.userRef
+            .doc(value.userPhone)
+            .snapshots()
+            .map((event) {
+          return event.data();
+        }),
+        builder: (context, child) {
+          return PersistentTabView(
+            backgroundColor: const Color(0xff242A32),
+            context,
+            screens: widgets,
+            items: _barItem,
+            controller: controller,
+            resizeToAvoidBottomInset: true,
+          );
+        },
+      );
+    });
   }
 }

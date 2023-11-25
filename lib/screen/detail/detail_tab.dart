@@ -19,11 +19,7 @@ class _DetailTabState extends State<DetailTab> {
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-    List type = [
-      "About Movie",
-      "Review",
-      "Cast",
-    ];
+    List type = ["About Movie", "Review", "Cast", "Recomendation"];
     TextTheme textTheme = ThemeApp.themeApp.textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),

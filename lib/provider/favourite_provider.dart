@@ -1,21 +1,21 @@
-import 'dart:convert';
 import 'package:baitap08/model/movie.dart';
+import 'package:baitap08/model/watch_list.dart';
+import 'package:baitap08/repository/watch_list_repo.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../repository/movie_repo.dart';
 
 class FavouriteProvider extends ChangeNotifier {
   List<int> favourieId = [];
   List<Movie> movies = [];
 
-  void addFavouriteItem(int id) async {
+  void addFavouriteItem(String userPhone, int id) async {
     if (favourieId.contains(id)) {
       favourieId.remove(id);
-      saveListId();
+      saveListId(userPhone, id);
       notifyListeners();
     } else {
       favourieId.add(id);
-      saveListId();
+      saveListId(userPhone, id);
       notifyListeners();
     }
   }
@@ -24,25 +24,25 @@ class FavouriteProvider extends ChangeNotifier {
     return favourieId.contains(id) ? true : false;
   }
 
-  void saveListId() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> listId = favourieId.map((e) => jsonEncode(e)).toList();
-    prefs.setStringList("listId", listId);
+  void saveListId(String userPhone, int id) async {
+    bool isExist = await WatchListRepo().checkExist(userPhone, id);
+    if (isExist == false) {
+      return;
+    }
+    WatchListRepo().saveWatchList(userPhone, id);
   }
 
-  void loadListId() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    List<String>? listData = prefs.getStringList("listId");
-    if (listData != null) {
-      favourieId = listData.map((e) => int.parse(e)).toList();
+  Future<void> loadListId(String phone) async {
+    List<WatchList> listWatchList = await WatchListRepo().getWatchList(phone);
+    if (listWatchList.isNotEmpty) {
+      favourieId = listWatchList.map((e) => e.movieId).toList();
     } else {
       favourieId = [];
     }
     notifyListeners();
   }
 
-  void loadWatchList() async {
+  Future<void> loadWatchList() async {
     movies.clear();
     if (favourieId.isNotEmpty) {
       for (var id in favourieId) {

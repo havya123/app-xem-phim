@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 class SearchProvider extends ChangeNotifier {
   bool isLoading = false;
   List<Movie> movies = [];
-  StreamController<Map> searchController = StreamController<Map>();
+  StreamController<Map> searchController = StreamController<Map>.broadcast();
   Timer? timer;
 
-  void getMovie(String keyword, {int page = 1}) {
+  Future<void> getMovie(String keyword, {int page = 1}) async {
     timer?.cancel();
 
     timer = Timer(const Duration(seconds: 1), () async {

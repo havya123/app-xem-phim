@@ -11,40 +11,37 @@ class UserDetailRepo {
 
   Future<void> updateName(String name, String phone) async {
     final docUser = FirebaseServices.userRef.doc(phone);
-    docUser.update({'name': name});
+    await docUser.update({'name': name});
   }
 
   Future<void> updateEmail(String email, String phone) async {
     final docUser = FirebaseServices.userRef.doc(phone);
-    docUser.update({'email': email});
+    await docUser.update({'email': email});
   }
 
   Future<void> updatePhone(String phoneChange, String phone) async {
     final docUser = FirebaseServices.userRef.doc(phone);
-    docUser.update({'phone': phoneChange});
+    await docUser.update({'phone': phoneChange});
   }
 
   Future<void> updateAddress(String phone, String address) async {
     final docUser = FirebaseServices.userRef.doc(phone);
-    docUser.update({'address': address});
+    await docUser.update({'address': address});
   }
 
   Future<void> updateAvatar(String avatar, String phone) async {
     final docUser = FirebaseServices.userRef.doc(phone);
-    docUser.update({'avatar': avatar});
+    await docUser.update({'avatar': avatar});
   }
 
   Future<void> uploadAvatar(
       XFile? imagePick, StreamController controller, String phone) async {
     try {
       final file = File(imagePick!.path);
-
       Reference referenceRoot = FirebaseStorage.instance.ref();
       final metadata = SettableMetadata(contentType: "image/jpeg");
-
       final uploadTask =
           referenceRoot.child("images/$phone.jpeg").putFile(file, metadata);
-
       uploadTask.snapshotEvents.listen(
         (TaskSnapshot taskSnapshot) async {
           switch (taskSnapshot.state) {
@@ -52,7 +49,6 @@ class UserDetailRepo {
               final progress =
                   taskSnapshot.bytesTransferred / taskSnapshot.totalBytes;
               controller.add(progress);
-
               break;
             case TaskState.paused:
               break;
@@ -62,8 +58,7 @@ class UserDetailRepo {
               break;
             case TaskState.success:
               String imageURL = await taskSnapshot.ref.getDownloadURL();
-              print(imageURL);
-              updateAvatar(imageURL, phone);
+              await updateAvatar(imageURL, phone);
               break;
           }
         },

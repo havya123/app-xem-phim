@@ -1,5 +1,6 @@
 import 'package:baitap08/model/film_review.dart';
 import 'package:baitap08/model/user.dart';
+import 'package:baitap08/model/watch_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseServices {
@@ -13,6 +14,14 @@ class FirebaseServices {
       .withConverter<FilmReview>(
         fromFirestore: (snapshot, options) =>
             FilmReview.fromMap(snapshot.data()!),
+        toFirestore: (value, options) => value.toMap(),
+      );
+
+  static final watchList = FirebaseFirestore.instance
+      .collection('favourite')
+      .withConverter<WatchList>(
+        fromFirestore: (snapshot, options) =>
+            WatchList.fromMap(snapshot.data()!),
         toFirestore: (value, options) => value.toMap(),
       );
 }

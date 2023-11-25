@@ -1,27 +1,33 @@
 import 'dart:convert';
 
 import 'package:baitap08/model/movie.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class MovieRepo {
   Future<List<Movie>> getMoviesPopular(String type, int page) async {
-    final url =
-        "https://api.themoviedb.org/3/movie/$type?language=en-US&page=$page";
-    final uri = Uri.parse(url);
-    var response = await http.get(uri, headers: {
-      'accept': 'application/json',
-      'Authorization': 'Bearer  ${dotenv.env['token']}'
-    });
+    try {
+      final url =
+          "https://api.themoviedb.org/3/movie/$type?language=en-US&page=$page";
+      final uri = Uri.parse(url);
+      var response = await http.get(uri, headers: {
+        'accept': 'application/json',
+        'Authorization': 'Bearer  ${dotenv.env['token']}'
+      });
 
-    Map<String, dynamic> listData = jsonDecode(response.body);
-    List results = listData['results'];
+      Map<String, dynamic> listData = jsonDecode(response.body);
+      List results = listData['results'];
 
-    List<Movie> result =
-        List<Movie>.from(results.map((e) => Movie.fromJson(jsonEncode(e))))
-            .toList();
+      List<Movie> result =
+          List<Movie>.from(results.map((e) => Movie.fromJson(jsonEncode(e))))
+              .toList();
 
-    return result;
+      return result;
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
   }
 
   Future<Movie?> getMovieDetail(int? id) async {
@@ -41,5 +47,25 @@ class MovieRepo {
       print("Error: ${response.statusCode} - ${response.reasonPhrase}");
       return null;
     }
+  }
+
+  Future<List<Movie>> getRecomendation(int id, int page) async {
+    final url =
+        "https://api.themoviedb.org/3/movie/$id/recommendations?language=en-US&page=$page";
+
+    final uri = Uri.parse(url);
+
+    var response = await http.get(uri, headers: {
+      'accept': 'application/json',
+      'Authorization': 'Bearer ${dotenv.env['token']}'
+    });
+
+    Map<String, dynamic> listData = jsonDecode(response.body);
+    List results = listData['results'];
+
+    List<Movie> result =
+        List<Movie>.from(results.map((e) => Movie.fromJson(jsonEncode(e))))
+            .toList();
+    return result;
   }
 }

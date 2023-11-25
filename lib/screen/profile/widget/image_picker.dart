@@ -1,3 +1,4 @@
+import 'package:baitap08/provider/login_provider.dart';
 import 'package:baitap08/provider/user_detail_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,17 +14,29 @@ class ImageSelected extends StatelessWidget {
         children: [
           TextButton(
             onPressed: () async {
-              await context.read<UserDetailProvider>().pickImageFromGallery();
-              await context.read<UserDetailProvider>().saveImage();
-              Navigator.pop(context);
+              await context
+                  .read<UserDetailProvider>()
+                  .pickImageFromGallery()
+                  .then((value) async {
+                await context
+                    .read<UserDetailProvider>()
+                    .saveImage(context.read<LoginProvider>().userPhone)
+                    .then((value) => Navigator.pop(context));
+              });
             },
             child: const Text('Lấy ảnh từ thư viện'),
           ),
           TextButton(
-            onPressed: () {
-              context.read<UserDetailProvider>().pickImageFromCamera();
-              context.read<UserDetailProvider>().saveImage();
-              Navigator.pop(context);
+            onPressed: () async {
+              await context
+                  .read<UserDetailProvider>()
+                  .pickImageFromCamera()
+                  .then((value) async {
+                await context
+                    .read<UserDetailProvider>()
+                    .saveImage(context.read<LoginProvider>().userPhone)
+                    .then((value) => Navigator.pop(context));
+              });
             },
             child: const Text('Lấy ảnh từ camera'),
           ),
